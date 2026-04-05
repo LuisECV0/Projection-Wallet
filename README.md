@@ -1,3 +1,34 @@
+# Simulador Financiero
+
+> Interfaz web para simular flujos financieros y metas de ahorro.
+
+Descripción breve:
+
+Este proyecto es una aplicación front-end creada con React y TypeScript que permite introducir ingresos, gastos y objetivos de ahorro para visualizar resultados y gráficas de flujo financiero.
+
+- **Stacks tecnológicos:** React, TypeScript, Vite, Tailwind CSS, PostCSS
+- **Bibliotecas / Recursos usados:** Recharts, lucide-react, clsx, class-variance-authority, tailwind-merge, tw-animate-css, vite, eslint, TypeScript
+
+Instalación y ejecución:
+
+1. Instalar dependencias:
+
+```bash
+npm install
+```
+
+2. Ejecutar en desarrollo:
+
+```bash
+npm run dev
+```
+
+3. Construir para producción:
+
+```bash
+npm run build
+```
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

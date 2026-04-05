@@ -1,95 +1,68 @@
 import { useState } from "react"
 import { ThemeToggle } from "./components/theme-toggle"
-import { WelcomeScreen } from "./components/welcome-screen"
-import { StepIndicator } from "./components/step-indicator"
-import { IncomeStep } from "./components/income-step"
-import { ExpenseStep } from "./components/expense-step"
-import { SavingsGoalStep } from "./components/savings-goal-step"
-import { ResultsStep } from "./components/results-step"
-import "./App.css"
-import type { Income, Expense, SavingsGoal } from "./hooks/finance"
+import { type ExpenseItem, type IncomeItem } from "./hooks/finance"
+import { Dashboard } from "./components/dashboard"
+import { IncomeManager } from "./components/income-manager"
+import { ExpenseManager } from "./components/expense-manager"
+import { AnalysisPanel } from "./components/analysis-panel"
 
 function App() {
-  const [started, setStarted] = useState<boolean>(false)
-  const [currentStep, setCurrentStep] = useState<number>(1)
+  const [incomes, setIncomes] = useState<IncomeItem[]>([
+    { id: "1", name: "Salario Mensual", amount: 2500, frequency: "monthly", category: "salary", isActive: true },
+  ])
 
-const [incomes, setIncomes] = useState<Income[]>([])
-const [expenses, setExpenses] = useState<Expense[]>([])
-const [savingsGoal, setSavingsGoal] = useState<SavingsGoal | null>(null)
+  const [expenses, setExpenses] = useState<ExpenseItem[]>([
+    { id: "1", name: "Vivienda", amount: 900, frequency: "monthly", category: "housing", isActive: true, isFixed: true },
+    { id: "2", name: "Servicios", amount: 150, frequency: "monthly", category: "utilities", isActive: true, isFixed: true },
+  ])
 
-  const handlePrevious = () => {
-    if (currentStep > 1) {
-      setCurrentStep((prev) => prev - 1)
-    }
-  }
-
-  const handleNext = () => {
-    if (currentStep < 4) {
-      setCurrentStep((prev) => prev + 1)
-    }
-  }
-
-  const handleReset = () => {
-    setStarted(false)
-    setCurrentStep(1)
-    setIncomes([])
-    setExpenses([])
-    setSavingsGoal(null)
-  }
+  const [activeTab, setActiveTab] = useState<"dashboard" | "incomes" | "expenses" | "analysis">("dashboard")
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors">
-      <div className="fixed top-0 right-0 p-4">
-        <ThemeToggle />
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-background to-background/95 text-foreground transition-colors">
+      <div className="fixed top-0 right-0 p-4 z-50"><ThemeToggle /></div>
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        <header className="mb-6">
+          <h1 className="text-3xl font-bold"> Simulador Financiero</h1>
+ 
+        </header>
 
-      {!started ? (
-        <WelcomeScreen onStart={() => setStarted(true)} />
-      ) : (
-        <div className="max-w-4xl mx-auto px-4 py-8">
-        <StepIndicator currentStep={currentStep} totalSteps={4} />
-
-          <div className="mt-8">
-            {currentStep === 1 && (
-              <IncomeStep
-                incomes={incomes}
-                setIncomes={setIncomes}
-                onNext={handleNext}
-              />
-            )}
-
-            {currentStep === 2 && (
-              <ExpenseStep
-                expenses={expenses}
-                setExpenses={setExpenses}
-                onPrevious={handlePrevious}
-                onNext={handleNext}
-              />
-            )}
-
-            {currentStep === 3 && (
-              <SavingsGoalStep
-                savingsGoal={savingsGoal}
-                setSavingsGoal={setSavingsGoal}
-                onPrevious={handlePrevious}
-                onNext={handleNext}
-              />
-            )}
-
-            {currentStep === 4 && (
-              <ResultsStep
-                incomes={incomes}
-                expenses={expenses}
-                savingsGoal={savingsGoal}
-                onPrevious={handlePrevious}
-                onReset={handleReset}
-              />
-            )}
-          </div>
+        <div className="flex flex-wrap gap-2 mb-6">
+          {[
+            ["dashboard", " Dashboard"],
+            ["incomes", " Ingresos"],
+            ["expenses", " Gastos"],
+            ["analysis", " Análisis"],
+          ].map(([id, label]) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id as "dashboard" | "incomes" | "expenses" | "analysis")}
+              className={`px-3 py-2 rounded-lg font-medium ${activeTab === id ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
-      )}
+
+        {activeTab === "dashboard" && (
+          <Dashboard incomes={incomes} expenses={expenses} />
+        )}
+
+        {activeTab === "incomes" && (
+          <IncomeManager incomes={incomes} setIncomes={setIncomes} />
+        )}
+
+        {activeTab === "expenses" && (
+          <ExpenseManager expenses={expenses} setExpenses={setExpenses} />
+        )}
+
+        {activeTab === "analysis" && (
+          <AnalysisPanel incomes={incomes} expenses={expenses} />
+        )}
+      </div>
     </div>
   )
 }
 
 export default App
+
